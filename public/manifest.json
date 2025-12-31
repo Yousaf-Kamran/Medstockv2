@@ -16,5 +16,23 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  {
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "App homepage on desktop"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "360x640",
+      "type": "image/png",
+      "label": "App homepage on mobile"
+      // form_factor omitted for mobile
+    }
+  ]
+}
   ]
 }
