@@ -30,7 +30,6 @@
       "sizes": "360x640",
       "type": "image/png",
       "label": "App homepage on mobile"
-      // form_factor omitted for mobile
     }
   ]
 }
