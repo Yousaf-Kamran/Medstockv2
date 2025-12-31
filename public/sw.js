@@ -79,4 +79,14 @@ self.addEventListener('periodicsync', (event) => {
   if (event.tag === 'check-medications-periodic') {
     event.waitUntil(checkMedications());
   }
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('medstockv2-v1').then(cache => cache.addAll(['/']))
+  );
+  self.skipWaiting();
+});
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => response || fetch(event.request))
+  );
 });
