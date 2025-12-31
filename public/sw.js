@@ -1,10 +1,14 @@
-// Service Worker for MedStock push notifications
+// Service Worker for MedStock push notifications + basic caching
 
 const CACHE_NAME = 'medstock-v1';
+const CACHE_URLS = ['/'];
 
-// Install event
+// Install event: cache essential files
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing...');
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(CACHE_URLS))
+  );
   self.skipWaiting();
 });
 
@@ -14,10 +18,19 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+// Fetch event: respond from cache, fallback to network
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then(response =>
+      response || fetch(event.request)
+    )
+  );
+});
+
 // Push notification event
 self.addEventListener('push', (event) => {
   console.log('Push notification received:', event);
-  
+
   const data = event.data ? event.data.json() : {};
   const title = data.title || 'MedStock Alert';
   const options = {
@@ -59,12 +72,20 @@ self.addEventListener('notificationclick', (event) => {
 // Background sync for checking medications (fallback)
 self.addEventListener('sync', (event) => {
   console.log('Background sync triggered:', event.tag);
-  
+
   if (event.tag === 'check-medications') {
     event.waitUntil(checkMedications());
   }
 });
 
+// Periodic background sync (if supported)
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'check-medications-periodic') {
+    event.waitUntil(checkMedications());
+  }
+});
+
+// Helper function for background checks
 async function checkMedications() {
   try {
     // This would check medications and send notifications if needed
@@ -73,20 +94,3 @@ async function checkMedications() {
     console.error('Error checking medications:', error);
   }
 }
-
-// Periodic background sync (if supported)
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'check-medications-periodic') {
-    event.waitUntil(checkMedications());
-  }
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open('medstockv2-v1').then(cache => cache.addAll(['/']))
-  );
-  self.skipWaiting();
-});
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
-  );
-});
