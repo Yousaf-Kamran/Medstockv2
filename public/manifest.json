@@ -16,7 +16,7 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  {
+  ],
   "screenshots": [
     {
       "src": "/screenshot-desktop.png",
@@ -31,7 +31,5 @@
       "type": "image/png",
       "label": "App homepage on mobile"
     }
-  ]
-}
   ]
 }
